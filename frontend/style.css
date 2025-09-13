@@ -1,0 +1,32 @@
+body { font-family: Arial, sans-serif; margin: 0; background: #f7f7f7; }
+header { background: darkgreen; padding: 10px; }
+nav a { color: white; margin: 0 10px; text-decoration: none; }
+nav a:hover { text-decoration: underline; }
+
+#products {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+.product {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+#fname { top: 100px; left: 50px; position: absolute; }
+#lname { top: 150px; left: 50px; position: absolute; }
+  
+button {
+  background: darkgreen;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  margin-top: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+button:hover { background: green; }
