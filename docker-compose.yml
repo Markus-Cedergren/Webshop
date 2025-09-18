@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   customer-service:
     build: ./customer-service
@@ -5,11 +7,67 @@ services:
       - "8001:8000"
     volumes:
       - ./customer-service:/customer-app
+    environment:
+      - DB_HOST=customer-db
+      - DB_USER=test
+      - DB_PASSWORD=pass
+      - DB_NAME=customerdb
+  
+
+  customer-db:
+    image: mysql:latest
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=customerdb
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=pass
+    ports:
+      - "3307:3306"
+    volumes:
+      - customer-db-data:/var/lib/mysql
 
   product-service:
     build: ./product-service
     ports:
       - "8002:8000"
     volumes: 
-    - ./product-service:/product-app
+      - ./product-service:/product-app
+    environment:
+      - DB_HOST=product-db
+      - DB_USER=test
+      - DB_PASSWORD=pass
+      - DB_NAME=productdb
 
+
+  product-db:
+    image: mysql:latest
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=productdb
+      - MYSQL_USER=test
+      - MYSQL_PASSWORD=pass
+    ports:
+      - "3308:3306"
+    volumes:
+      - product-db-data:/var/lib/mysql
+
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "8050:80"
+
+volumes:
+  customer-db-data:
+  product-db-data:
