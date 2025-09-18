@@ -1,6 +1,6 @@
 // Hämta produkter och visa på index.html
 async function loadProducts() {
-    const response = await fetch("http://127.0.0.1:8000/all_items");
+    const response = await fetch("http://127.0.0.1:8002/products");
     const products = await response.json();
     const container = document.getElementById("products");
     if (!container) return; // om vi inte är på index.html
@@ -12,33 +12,67 @@ async function loadProducts() {
       div.innerHTML = `
         <h2>${p.name}</h2>
         <p>${p.price} kr</p>
-        <button onclick="addToCart('${p.name}', ${p.price})">Lägg i kundvagn</button>
+        <button>Lägg i kundvagn</button>
       `;
       container.appendChild(div);
     });
   }
   
-  // Lägg till produkt i kundvagn (localStorage)
-  function addToCart(name, price) {
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cart.push({ name, price });
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert(`${name} lades till i kundvagnen!`);
+async function login(){
+  const usernameTextField = document.getElementById("name");
+  const passwordTextField = document.getElementById("password");
+
+  username = usernameTextField.value; 
+  password = passwordTextField.value; 
+
+  const response = await fetch("http://127.0.0.1:8001/login", {
+    method:"POST",
+    headers:{
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      name: username,
+      password: password
+    })
+  });
+
+  const result = await response.json();
+  if(result.loggin_sucess){
+    alert("Success")
+  }else{
+    alert("Wrong username or password");
   }
-  
-  // Visa kundvagnen (cart.html)
-  function renderCart() {
-    const cartList = document.getElementById("cart");
-    if (!cartList) return; // om vi inte är på cart.html
-  
-    let cart = JSON.parse(localStorage.getItem("cart")) || [];
-    cartList.innerHTML = "";
-    cart.forEach(item => {
-      const li = document.createElement("li");
-      li.textContent = `${item.name} – ${item.price} kr`;
-      cartList.appendChild(li);
-    });
+
+  usernameTextField.value = "";
+  passwordTextField.value = "";
+}
+
+
+async function addProduct(){
+  const productName = document.getElementById("productName");
+  const productPrice = document.getElementById("productPrice");
+
+  Pname = productName.value;
+  Pprice = productPrice.value;
+
+  const response = await fetch("http://127.0.0.1:8002/addProduct", {
+    method: "POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      name:Pname,
+      price:Pprice
+    })
+  });
+  const result = await response.json();
+  if(result.sucess){
+    alert("Sucess")
+  }else{
+    alert("Failed to add product")
   }
-  
-  // Kör när sidan laddas (bara om #products finns)
-//   window.onload = loadProducts;
+
+  productName.value = "";
+  productPrice.value = "";
+
+}
