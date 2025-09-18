@@ -37,7 +37,7 @@ async function login(){
   });
 
   const result = await response.json();
-  if(result.loggin_sucess){
+  if(result.success){
     alert("Success")
   }else{
     alert("Wrong username or password");
@@ -66,7 +66,7 @@ async function addProduct(){
     })
   });
   const result = await response.json();
-  if(result.sucess){
+  if(result.success){
     alert("Sucess")
   }else{
     alert("Failed to add product")
@@ -75,4 +75,35 @@ async function addProduct(){
   productName.value = "";
   productPrice.value = "";
 
+}
+
+
+async function addCustomer(){
+  
+  const customerName = document.getElementById("newName");
+  const customerPassword = document.getElementById("newPassword");
+
+  newName = customerName.value;
+  newPassword = customerPassword.value;
+
+
+  const response = await fetch("http://127.0.0.1:8001/addAccount", {
+    method:"POST",
+    headers:{"Content-Type": "application/json"
+  },
+  body:JSON.stringify({
+    name:newName,
+    password:newPassword
+  })
+  });
+
+const result = await response.json();
+  if(result.success){
+    alert("Success")
+  }else{
+    alert("Failed to add customer")
+  }
+
+  customerName.value = "";
+  customerPassword.value = "";
 }
