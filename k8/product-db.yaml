@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: product-db
+spec:
+  serviceName: product-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-db
+  template:
+    metadata:
+      labels:
+        app: product-db
+    spec:
+      containers:
+      - name: product-db
+        image: mysql:latest
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"
+        - name: MYSQL_DATABASE
+          value: "productdb"
+        - name: MYSQL_USER
+          value: "test"
+        - name: MYSQL_PASSWORD
+          value: "pass"
+        volumeMounts:
+        - name: product-db-storage
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: product-db-storage
+    spec:
+      storageClassName: hostpath
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-db
+spec:
+  selector:
+    app: product-db
+  ports:
+    - port: 3306
+      targetPort: 3306
+  clusterIP: None   # headless service krävs för StatefulSet

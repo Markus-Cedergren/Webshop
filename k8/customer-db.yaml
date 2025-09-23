@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: customer-db
+spec:
+  serviceName: customer-db
+  replicas: 1
+  selector:
+    matchLabels:
+      app: customer-db
+  template:
+    metadata:
+      labels:
+        app: customer-db
+    spec:
+      containers:
+      - name: customer-db
+        image: mysql:latest
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"
+        - name: MYSQL_DATABASE
+          value: "customerdb"
+        - name: MYSQL_USER
+          value: "test"
+        - name: MYSQL_PASSWORD
+          value: "pass"
+        volumeMounts:
+        - name: customer-db-storage
+          mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: customer-db-storage
+    spec:
+      storageClassName: hostpath
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 10Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-db
+spec:
+  selector:
+    app: customer-db
+  ports:
+    - port: 3306
+      targetPort: 3306
+  clusterIP: None   # headless service krävs för StatefulSet
