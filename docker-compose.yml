@@ -65,6 +65,7 @@ services:
     image: nginx:alpine
     volumes:
       - ./frontend:/usr/share/nginx/html:ro
+      
     ports:
       - "8050:80"
 
