@@ -1,6 +1,6 @@
 // Hämta produkter och visa på index.html
 async function loadProducts() {
-    const response = await fetch("http://127.0.0.1:8002/products");
+    const response = await fetch("http://127.0.0.1:8002/getProducts");
     const products = await response.json();
     const container = document.getElementById("products");
     if (!container) return; // om vi inte är på index.html

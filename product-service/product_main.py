@@ -62,7 +62,7 @@ def root():
     return {"hello" : "from product service"}
 
 
-@app.get("/products")
+@app.get("/getProducts")
 def get_item():
     return getAllProducts()
 
