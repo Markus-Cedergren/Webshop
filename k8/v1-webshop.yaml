@@ -1,31 +1,35 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: product-service
+  name: product-deployment 
 spec:
   selector:
     matchLabels:
       app: product-service
-  replicas: 1
+  replicas: 1 #Starting with only one replica. Could be scaled via "kubectl"
   template:
     metadata:
       labels:
         app: product-service
     spec:
       containers:
-      - name: product-service
+      - name: product-container
         image: markusceder/product-service:v10
-        ports:
-        - containerPort: 8000
-        env:
-        - name: DB_HOST
-          value: "product-db"
-        - name: DB_USER
-          value: "test"
-        - name: DB_PASSWORD
-          value: "pass"
-        - name: DB_NAME
-          value: "productdb"
+        env: #Grabbing "sensitive" information about the database
+          - name: DB_HOST
+            value: "product-db"
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:   
+                name: product-secret
+                key: DB_USER
+          - name: DB_PASSWORD
+            valueFrom:        
+              secretKeyRef:
+                name: product-secret
+                key: DB_PASSWORD
+          - name: DB_NAME
+            value: "productdb"
 
 ---
 
@@ -39,11 +43,15 @@ spec:
   ports:
     - port: 8000
       targetPort: 8000
-  type: ClusterIP
+  type: ClusterIP #using kluser IP when services should not be used from the outside
 
 
 
 ---
+
+
+
+
 
 apiVersion: apps/v1
 kind: Deployment
@@ -62,17 +70,21 @@ spec:
       containers:
       - name: customer-service
         image: markusceder/customer-service:v10
-        ports:
-        - containerPort: 8000
         env:
-        - name: DB_HOST
-          value: "customer-db"
-        - name: DB_USER
-          value: "test"
-        - name: DB_PASSWORD
-          value: "pass"
-        - name: DB_NAME
-          value: "customerdb"
+          - name: DB_HOST
+            value: "customer-db"
+          - name: DB_USER
+            valueFrom:
+              secretKeyRef:   
+                name: customer-secret
+                key: DB_USER
+          - name: DB_PASSWORD
+            valueFrom:        
+              secretKeyRef:
+                name: customer-secret
+                key: DB_PASSWORD
+          - name: DB_NAME
+            value: "customerdb"
 
 ---
 
@@ -107,7 +119,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: markusceder/frontend:v13
+        image: markusceder/frontend:v15
         ports:
         - containerPort: 80
 
