@@ -1,6 +1,6 @@
 // Hämta produkter och visa på index.html
 async function loadProducts() {
-    const response = await fetch("http://127.0.0.1:8002/getProducts");
+    const response = await fetch("/getProducts");
     const products = await response.json();
     const container = document.getElementById("products");
     if (!container) return; // om vi inte är på index.html
@@ -25,7 +25,7 @@ async function login(){
   username = usernameTextField.value; 
   password = passwordTextField.value; 
 
-  const response = await fetch("http://127.0.0.1:8001/login", {
+  const response = await fetch("/login", {
     method:"POST",
     headers:{
       "Content-Type": "application/json"
@@ -55,7 +55,7 @@ async function addProduct(){
   Pname = productName.value;
   Pprice = productPrice.value;
 
-  const response = await fetch("http://127.0.0.1:8002/addProduct", {
+  const response = await fetch("/addProduct", {
     method: "POST",
     headers:{
       "Content-Type":"application/json"
@@ -87,7 +87,7 @@ async function addCustomer(){
   newPassword = customerPassword.value;
 
 
-  const response = await fetch("http://127.0.0.1:8001/addAccount", {
+  const response = await fetch("/addAccount", {
     method:"POST",
     headers:{"Content-Type": "application/json"
   },

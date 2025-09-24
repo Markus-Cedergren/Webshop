@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: product-service
-        image: markusceder/product-service:v1
+        image: markusceder/product-service:v10
         ports:
         - containerPort: 8000
         env:
@@ -61,7 +61,7 @@ spec:
     spec:
       containers:
       - name: customer-service
-        image: markusceder/customer-service:v1
+        image: markusceder/customer-service:v10
         ports:
         - containerPort: 8000
         env:
@@ -107,7 +107,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: markusceder/frontend:v1
+        image: markusceder/frontend:v11
         ports:
         - containerPort: 80
 
