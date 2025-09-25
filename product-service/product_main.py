@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import mysql.connector
 import os
+import time
 
 class Item(BaseModel):
     name:str
@@ -32,25 +33,30 @@ def getConnection(): #Create connection to DB.
 
 
 def init_database():
-    print("TESTING TO INIT_DATABASE!")
-    print("HOST:", DB_HOST)
-    print("USER:", DB_USER)
-    print("PASSWORD:", DB_PASSWORD)
-    print("NAME:", DB_NAME)
+    for try_connect in range(10):
+        try:
+            print("TESTING TO INIT_DATABASE!")
+            print("HOST:", DB_HOST)
+            print("USER:", DB_USER)
+            print("PASSWORD:", DB_PASSWORD)
+            print("NAME:", DB_NAME)
 
-    connection = getConnection()
-    cursor = connection.cursor()
-    cursor.execute(
-        '''CREATE TABLE IF NOT EXISTS products(
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            name VARCHAR(255),
-            price INT
-        ); '''
-    )
-    connection.commit()
-    cursor.close()
-    connection.close()
-    print("--Initiated products-table--")
+            connection = getConnection()
+            cursor = connection.cursor()
+            cursor.execute(
+                '''CREATE TABLE IF NOT EXISTS products(
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    name VARCHAR(255),
+                    price INT
+                ); '''
+            )
+            connection.commit()
+            cursor.close()
+            connection.close()
+            return
+            print("--Initiated products-table--")
+        except:
+            time.sleep(5)
 
 init_database()
 

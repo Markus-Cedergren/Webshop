@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
 import os
+import time
 
 class User(BaseModel): #Define class for communicating. (Fast API)
     name:str
@@ -25,19 +26,25 @@ def getConnection(): #Create a connection to the database
 
 
 def init_database():
-    connection = getConnection()
-    cursor = connection.cursor()
-    cursor.execute(
-        '''CREATE TABLE IF NOT EXISTS users(
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            username VARCHAR(255),
-            password VARCHAR(255)
-        ); '''
-    )
-    connection.commit()
-    cursor.close()
-    connection.close()
-    print("--initiated users-table --")
+    for try_connect in range(10):
+        try:
+            connection = getConnection()
+            cursor = connection.cursor()
+            cursor.execute(
+                '''CREATE TABLE IF NOT EXISTS users(
+                    id INT AUTO_INCREMENT PRIMARY KEY,
+                    username VARCHAR(255),
+                    password VARCHAR(255)
+                ); '''
+            )
+            connection.commit()
+            cursor.close()
+            connection.close()
+            print("--initiated users-table --")
+            return
+        except:
+            time.sleep(5)
+
 init_database()
 
 

@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: product-container
-        image: markusceder/product-service:v25
+        image: markusceder/product-service:v28
 
         env: #Grabbing "sensitive" information about the database. Used for the backend to be able to communicate with the db.
           - name: DB_HOST
@@ -76,7 +76,7 @@ spec:
     spec:
       containers:
       - name: customer-service
-        image: markusceder/customer-service:v27
+        image: markusceder/customer-service:v28
         env:
           - name: DB_HOST
             value: "customer-db"
