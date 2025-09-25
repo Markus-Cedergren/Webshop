@@ -9,7 +9,7 @@ spec:
   capacity:
     storage: 2Gi
   accessModes:
-    - ReadWriteOnce
+    - ReadWriteOnce #Only one node can use the volume
   hostPath:
     path: "/mnt/data"
 ---

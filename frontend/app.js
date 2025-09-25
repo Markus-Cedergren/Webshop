@@ -4,22 +4,21 @@ async function loadProducts() {
     const container = document.getElementById("products");
   
     container.innerHTML = "";
-    products.forEach(p => {
+    products.forEach(prod => { //For each product create a new div
       const div = document.createElement("div");
       div.className = "product";
-      div.innerHTML = `
-        <h2>${p.name}</h2>
-        <p>${p.price} kr</p>
-      `;
+      div.innerHTML = ` 
+      <h2>${prod.name}</h2> 
+      <p>${prod.price} kr</p>`;
       container.appendChild(div);
     });
   }
   
 async function login(){
-  const usernameTextField = document.getElementById("name");
+  const usernameTextField = document.getElementById("name"); 
   const passwordTextField = document.getElementById("password");
 
-  username = usernameTextField.value; 
+  username = usernameTextField.value; //Get the user-input (username and password)
   password = passwordTextField.value; 
 
   const response = await fetch("/login", {
@@ -40,7 +39,7 @@ async function login(){
     alert("Wrong username or password");
   }
 
-  usernameTextField.value = "";
+  usernameTextField.value = ""; //Reset the text-inputs
   passwordTextField.value = "";
 }
 
@@ -63,7 +62,7 @@ async function addProduct(){
     })
   });
   const result = await response.json();
-  if(result.success){
+  if(result.success){ //checks the return from the product-service
     alert("Sucess")
   }else{
     alert("Failed to add product")

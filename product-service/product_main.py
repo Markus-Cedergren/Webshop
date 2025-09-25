@@ -1,6 +1,5 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
 import os
 
@@ -12,15 +11,50 @@ class Item(BaseModel):
 app = FastAPI()
 
 
+
+
 DB_HOST = os.getenv("DB_HOST") #Find the value for DB_HOST
 DB_USER = os.getenv("DB_USER") #Find the DB_USER
 DB_PASSWORD = os.getenv("DB_PASSWORD") #Find the DB_PASSWORD
 DB_NAME = os.getenv("DB_NAME") #Find the DB_NAME
 
+print("TESTING TO INIT_DATABASE!")
+print("HOST:", DB_HOST)
+print("USER:", DB_USER)
+print("PASSWORD:", DB_PASSWORD)
+print("NAME:", DB_NAME)
 
 
 def getConnection(): #Create connection to DB.
     return mysql.connector.connect(host = DB_HOST, user = DB_USER, password = DB_PASSWORD, database = DB_NAME)
+
+
+
+
+def init_database():
+    print("TESTING TO INIT_DATABASE!")
+    print("HOST:", DB_HOST)
+    print("USER:", DB_USER)
+    print("PASSWORD:", DB_PASSWORD)
+    print("NAME:", DB_NAME)
+
+    connection = getConnection()
+    cursor = connection.cursor()
+    cursor.execute(
+        '''CREATE TABLE IF NOT EXISTS products(
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            name VARCHAR(255),
+            price INT
+        ); '''
+    )
+    connection.commit()
+    cursor.close()
+    connection.close()
+    print("--Initiated products-table--")
+
+init_database()
+
+
 
 
 def getAllProducts():

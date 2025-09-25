@@ -29,5 +29,5 @@ spec:
   selector:
     app: adminer
   ports:
-    - port: 8080
-      nodePort: 30002
+    - port: 8080 #Internal port
+      nodePort: 30002 #Exposed port.

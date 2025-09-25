@@ -18,9 +18,29 @@ DB_PASSWORD = os.getenv("DB_PASSWORD") #Get the DB_PASSWORD frome env
 DB_NAME = os.getenv("DB_NAME") #Get the DB_NAME from env
 
 
-
 def getConnection(): #Create a connection to the database
     return mysql.connector.connect(host = DB_HOST, user = DB_USER, password = DB_PASSWORD, database = DB_NAME)
+
+
+
+
+def init_database():
+    connection = getConnection()
+    cursor = connection.cursor()
+    cursor.execute(
+        '''CREATE TABLE IF NOT EXISTS users(
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            username VARCHAR(255),
+            password VARCHAR(255)
+        ); '''
+    )
+    connection.commit()
+    cursor.close()
+    connection.close()
+    print("--initiated users-table --")
+init_database()
+
+
 
 
 def checkLogin(name, password): #Check if a password and username is existing in the database. 
@@ -45,7 +65,7 @@ def addCustomer(name, password): #Try to add add a new customer to the database
         cursor.execute(
             ''' INSERT INTO users (username, password) VALUES (%s,%s)''', (name, password)
         )
-        connection.commit()
+        
         cursor.close()
         connection.close()
         
