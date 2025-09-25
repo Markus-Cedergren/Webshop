@@ -1,3 +1,6 @@
+#File contains deployment and service for the microservices: Product-service, customer-service
+#Deployment and service for databases and adminer are separate file.
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -14,8 +17,9 @@ spec:
     spec:
       containers:
       - name: product-container
-        image: markusceder/product-service:v10
-        env: #Grabbing "sensitive" information about the database
+        image: markusceder/product-service:v15
+
+        env: #Grabbing "sensitive" information about the database. Used for the backend to be able to communicate with the db.
           - name: DB_HOST
             value: "product-db"
           - name: DB_USER
@@ -23,11 +27,13 @@ spec:
               secretKeyRef:   
                 name: product-secret
                 key: DB_USER
+
           - name: DB_PASSWORD
             valueFrom:        
               secretKeyRef:
                 name: product-secret
                 key: DB_PASSWORD
+
           - name: DB_NAME
             value: "productdb"
 
@@ -69,7 +75,7 @@ spec:
     spec:
       containers:
       - name: customer-service
-        image: markusceder/customer-service:v10
+        image: markusceder/customer-service:v15
         env:
           - name: DB_HOST
             value: "customer-db"
@@ -119,7 +125,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: markusceder/frontend:v15
+        image: markusceder/frontend:v16
         ports:
         - containerPort: 80
 

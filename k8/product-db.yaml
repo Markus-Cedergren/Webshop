@@ -1,53 +1,89 @@
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: v1
+kind: PersistentVolume
 metadata:
-  name: product-db
+  name: product-db-pv-volume
+  labels:
+    type: product-pv
 spec:
-  serviceName: product-db
-  replicas: 1
-  selector:
-    matchLabels:
-      app: product-db
-  template:
-    metadata:
-      labels:
-        app: product-db
-    spec:
-      containers:
-      - name: product-db
-        image: mysql:latest
-        ports:
-        - containerPort: 3306
-        env:
-        - name: MYSQL_ROOT_PASSWORD
-          value: "password"
-        - name: MYSQL_DATABASE
-          value: "productdb"
-        - name: MYSQL_USER
-          value: "test"
-        - name: MYSQL_PASSWORD
-          value: "pass"
-        volumeMounts:
-        - name: product-db-storage
-          mountPath: /var/lib/mysql
-  volumeClaimTemplates:
-  - metadata:
-      name: product-db-storage
-    spec:
-      storageClassName: hostpath
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: 10Mi
+  storageClassName: manual
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/product-data"
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: productdb-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+
+---
+
 apiVersion: v1
 kind: Service
 metadata:
   name: product-db
 spec:
-  selector:
-    app: product-db
   ports:
-    - port: 3306
-      targetPort: 3306
-  clusterIP: None   # headless service krävs för StatefulSet
+  - port: 3306
+  selector:
+    app: productdb
+  clusterIP: None
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productdb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: productdb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: productdb
+    spec:
+      containers:
+      - image: mysql:latest
+        name: productdb-deployment
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: product-secret
+                key: ROOT_PASSWORD
+          - name: MYSQL_DATABASE
+            value: "productdb"
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: product-secret
+                key: DB_USER
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: product-secret
+                key: DB_PASSWORD
+        ports:
+        - containerPort: 3306
+          name: product-db
+        volumeMounts:
+        - name: productdb-persistent-storage
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: productdb-persistent-storage
+        persistentVolumeClaim:
+          claimName: productdb-pv-claim

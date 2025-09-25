@@ -1,56 +1,99 @@
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: v1
+kind: PersistentVolume
 metadata:
-  name: customer-db
+  name: customer-db-pv-volume
+  labels:
+    type: customer-pv
 spec:
-  serviceName: customer-db
-  replicas: 1
-  selector:
-    matchLabels:
-      app: customer-db
-  template:
-    metadata:
-      labels:
-        app: customer-db
-    spec:
-      containers:
-      - name: customer-db
-        image: mysql:latest
-        ports:
-        - containerPort: 3306
-        env:
-          - name: DB_HOST
-            value: "customer-db"
-          - name: DB_USER
-            valueFrom:
-              secretKeyRef:   
-                name: customer-secret
-                key: DB_USER
-          - name: DB_PASSWORD
-            valueFrom:        
-              secretKeyRef:
-                name: customer-secret
-                key: DB_PASSWORD
-          - name: DB_NAME
-            value: "customerdb"
-  volumeClaimTemplates:
-  - metadata:
-      name: customer-db-storage
-    spec:
-      storageClassName: hostpath
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: 10Mi
+  storageClassName: manual
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
 ---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: customerdb-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+
+
+---
+
 apiVersion: v1
 kind: Service
 metadata:
   name: customer-db
 spec:
-  selector:
-    app: customer-db
   ports:
-    - port: 3306
-      targetPort: 3306
-  clusterIP: None   
+  - port: 3306
+  selector:
+    app: customerdb
+  clusterIP: None
+
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customerdb-deployment
+spec:
+  selector:
+    matchLabels:
+      app: customerdb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: customerdb
+    spec:
+      containers:
+      - image: mysql:latest
+        name: customerdb-deployment
+        env:
+
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: customer-secret
+                key: ROOT_PASSWORD
+
+
+          - name: MYSQL_DATABASE
+            value: "customerdb"
+
+
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: customer-secret
+                key: DB_USER
+
+
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: customer-secret
+                key: DB_PASSWORD
+
+        ports:
+        - containerPort: 3306
+          name: customer-db
+
+        volumeMounts:
+        - name: customerdb-persistent-storage
+          mountPath: /var/lib/mysql
+          
+      volumes:
+      - name: customerdb-persistent-storage
+        persistentVolumeClaim:
+          claimName: customerdb-pv-claim

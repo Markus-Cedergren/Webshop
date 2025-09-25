@@ -12,17 +12,6 @@ class User(BaseModel):
 app = FastAPI()
 
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],   # för test: tillåt alla
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-
-
-
 DB_HOST = os.getenv("DB_HOST", "localhost")
 DB_USER = os.getenv("DB_USER", "test")
 DB_PASSWORD = os.getenv("DB_PASSWORD", "pass")
