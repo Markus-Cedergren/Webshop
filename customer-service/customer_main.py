@@ -65,7 +65,7 @@ def addCustomer(name, password): #Try to add add a new customer to the database
         cursor.execute(
             ''' INSERT INTO users (username, password) VALUES (%s,%s)''', (name, password)
         )
-        
+        connection.commit()
         cursor.close()
         connection.close()
         

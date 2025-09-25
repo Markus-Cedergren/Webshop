@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: product-container
-        image: markusceder/product-service:v22
+        image: markusceder/product-service:v25
 
         env: #Grabbing "sensitive" information about the database. Used for the backend to be able to communicate with the db.
           - name: DB_HOST
@@ -76,7 +76,7 @@ spec:
     spec:
       containers:
       - name: customer-service
-        image: markusceder/customer-service:v20
+        image: markusceder/customer-service:v27
         env:
           - name: DB_HOST
             value: "customer-db"
@@ -126,7 +126,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: markusceder/frontend:v20
+        image: markusceder/frontend:v25
         ports:
         - containerPort: 80
 
