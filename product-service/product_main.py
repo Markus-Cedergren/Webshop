@@ -11,13 +11,15 @@ class Item(BaseModel):
 
 app = FastAPI()
 
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_USER = os.getenv("DB_USER", "test")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "pass")
-DB_NAME = os.getenv("DB_NAME", "productdb")
+
+DB_HOST = os.getenv("DB_HOST") #Find the value for DB_HOST
+DB_USER = os.getenv("DB_USER") #Find the DB_USER
+DB_PASSWORD = os.getenv("DB_PASSWORD") #Find the DB_PASSWORD
+DB_NAME = os.getenv("DB_NAME") #Find the DB_NAME
 
 
-def getConnection():
+
+def getConnection(): #Create connection to DB.
     return mysql.connector.connect(host = DB_HOST, user = DB_USER, password = DB_PASSWORD, database = DB_NAME)
 
 

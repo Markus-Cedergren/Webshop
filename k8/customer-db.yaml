@@ -59,7 +59,7 @@ spec:
       containers:
       - image: mysql:latest
         name: customerdb-deployment
-        env:
+        env: #Define variables / where to find them.
 
           - name: MYSQL_ROOT_PASSWORD
             valueFrom:

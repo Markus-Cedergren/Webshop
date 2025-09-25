@@ -1,9 +1,7 @@
-// Hämta produkter och visa på index.html
 async function loadProducts() {
-    const response = await fetch("/getProducts");
-    const products = await response.json();
+    const response = await fetch("/getProducts"); //ask the product-service to return all the products
+    const products = await response.json(); //make into json
     const container = document.getElementById("products");
-    if (!container) return; // om vi inte är på index.html
   
     container.innerHTML = "";
     products.forEach(p => {
@@ -12,7 +10,6 @@ async function loadProducts() {
       div.innerHTML = `
         <h2>${p.name}</h2>
         <p>${p.price} kr</p>
-        <button>Lägg i kundvagn</button>
       `;
       container.appendChild(div);
     });

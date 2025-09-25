@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
 import os
 
-class User(BaseModel):
+class User(BaseModel): #Define class for communicating. (Fast API)
     name:str
     password:str
 
@@ -12,18 +12,18 @@ class User(BaseModel):
 app = FastAPI()
 
 
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_USER = os.getenv("DB_USER", "test")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "pass")
-DB_NAME = os.getenv("DB_NAME", "customerdb")
+DB_HOST = os.getenv("DB_HOST") #Get the DB_HOST from env
+DB_USER = os.getenv("DB_USER") #Get the DB_USER from env
+DB_PASSWORD = os.getenv("DB_PASSWORD") #Get the DB_PASSWORD frome env
+DB_NAME = os.getenv("DB_NAME") #Get the DB_NAME from env
 
 
 
-def getConnection():
+def getConnection(): #Create a connection to the database
     return mysql.connector.connect(host = DB_HOST, user = DB_USER, password = DB_PASSWORD, database = DB_NAME)
 
 
-def checkLogin(name, password):
+def checkLogin(name, password): #Check if a password and username is existing in the database. 
     connection = getConnection()
     cursor = connection.cursor()
     cursor.execute(
@@ -38,7 +38,7 @@ def checkLogin(name, password):
     else:
         return True
 
-def addCustomer(name, password):
+def addCustomer(name, password): #Try to add add a new customer to the database
     try:
         connection = getConnection()
         cursor = connection.cursor()
@@ -54,13 +54,13 @@ def addCustomer(name, password):
         return False
 
 
-@app.get("/")
+@app.get("/") #Default endpoint
 def root():
     return {"hello" : "from customer service"}
 
 
 
-@app.post("/login")
+@app.post("/login") #Login endpoint
 def get_item(user: User):
     if checkLogin(user.name, user.password) == True:
         return {"success": True}
@@ -69,7 +69,7 @@ def get_item(user: User):
 
     
     
-@app.post("/addAccount")
+@app.post("/addAccount") #addAccount endpoint
 def add_account(user: User):
     if addCustomer(user.name, user.password) == True:
         return {"success": True}

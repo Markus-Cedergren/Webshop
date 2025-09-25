@@ -1,5 +1,6 @@
 #File contains deployment and service for the microservices: Product-service, customer-service
 #Deployment and service for databases and adminer are separate file.
+#Secret defined in additional yaml-file
 
 apiVersion: apps/v1
 kind: Deployment
@@ -17,7 +18,7 @@ spec:
     spec:
       containers:
       - name: product-container
-        image: markusceder/product-service:v15
+        image: markusceder/product-service:v17
 
         env: #Grabbing "sensitive" information about the database. Used for the backend to be able to communicate with the db.
           - name: DB_HOST
@@ -75,7 +76,7 @@ spec:
     spec:
       containers:
       - name: customer-service
-        image: markusceder/customer-service:v15
+        image: markusceder/customer-service:v17
         env:
           - name: DB_HOST
             value: "customer-db"
@@ -125,7 +126,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: markusceder/frontend:v16
+        image: markusceder/frontend:v18
         ports:
         - containerPort: 80
 
@@ -139,8 +140,6 @@ spec:
   ports:
   - name: http
     port: 80
-    targetPort: 80
-    nodePort: 30001
     protocol: TCP
   selector:
     app: frontend
