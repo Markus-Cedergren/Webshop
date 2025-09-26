@@ -1,3 +1,6 @@
+# Markus Cedergren
+# mace20@student.bth.se
+
 # Webshop
 
 ## The project git for the assignment "Build something" in the course PA2577
